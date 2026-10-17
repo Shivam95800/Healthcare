@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}CareOS — Healthcare Records Controller{% endblock %}</title>
+  <meta name="description" content="Production-grade Healthcare Records Controller with Django, DRF, PostgreSQL, and JWT. Secure patient, doctor and mapping governance.">
+
+  <!-- Design System CSS -->
+  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <!-- Sticky Navbar (Kuber-OS Aesthetic) -->
+  <header class="site-header">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="/" class="brand-logo" id="brand-logo-link">
+          <div class="logo-badge">C</div>
+          <div class="brand-text">
+            <span class="brand-name">CareOS</span>
+            <span class="brand-tagline">Healthcare Records Controller</span>
+          </div>
+        </a>
+
+        <ul class="nav-links">
+          <li><a href="/#why-careos" class="nav-link" id="nav-why">Why CareOS</a></li>
+          <li><a href="/#how-it-works" class="nav-link" id="nav-how">How It Works</a></li>
+          <li><a href="/#pipeline" class="nav-link" id="nav-pipeline">Pipeline</a></li>
+          <li><a href="/console/" class="nav-link" id="nav-console">Console</a></li>
+          <li><a href="/#api-docs" class="nav-link" id="nav-api">API Docs</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <span class="badge-sandbox" id="navbar-sandbox-badge">SANDBOX</span>
+          
+          <!-- Theme Switcher -->
+          <button class="btn-theme-toggle" id="theme-toggle-btn" title="Toggle color theme" aria-label="Toggle color theme">
+            🌙
+          </button>
+
+          <!-- Dynamic Auth Button -->
+          <a href="/console/" class="btn-primary" id="btn-nav-console">
+            Open Console
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Block -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Toast Notification Root Container -->
+  <div id="toast-container"></div>
+
+  <!-- Global API Client & Theme Controller -->
+  <script src="{% static 'js/api.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

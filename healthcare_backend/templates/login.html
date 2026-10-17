@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign In — CareOS Healthcare Controller{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="eyebrow">Enterprise Access</div>
+      <h2 class="auth-title">Welcome to CareOS</h2>
+      <p class="auth-desc">Sign in with your provider credentials to access the console</p>
+    </div>
+
+    <div class="auth-alert" id="auth-alert"></div>
+
+    <form id="login-form" class="auth-form">
+      <div class="form-group">
+        <label class="form-label" for="email">Provider Email</label>
+        <input type="email" id="email" class="form-control" placeholder="doctor@careos.health" required autofocus>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input type="password" id="password" class="form-control" placeholder="••••••••••••" required>
+      </div>
+
+      <button type="submit" class="btn-primary" style="width:100%; margin-top:8px;">
+        Sign In
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      New to CareOS? <a href="/register/">Register an account</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/auth.js' %}"></script>
+{% endblock %}

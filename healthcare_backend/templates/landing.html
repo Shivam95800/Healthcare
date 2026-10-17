@@ -1,0 +1,449 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}CareOS — Modern Healthcare Records Controller{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/landing.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- 1. Hero Section -->
+<section class="hero-section">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <div class="eyebrow">
+          <span>⚡</span> Django · DRF · PostgreSQL · JWT
+        </div>
+        <h1 class="hero-title">
+          Unified control for <span>healthcare records.</span>
+        </h1>
+        <p class="hero-subtitle">
+          CareOS delivers high-assurance patient isolation, authenticated doctor directories, and verified clinical mappings through a zero-leakage PostgreSQL ORM pipeline.
+        </p>
+        <div class="hero-cta-group">
+          <a href="/console/" class="btn-primary" id="hero-btn-launch">
+            Launch Console →
+          </a>
+          <a href="#pipeline" class="btn-secondary" id="hero-btn-docs">
+            View API Docs
+          </a>
+        </div>
+      </div>
+
+      <!-- Live Animated Pipeline Card -->
+      <div class="hero-right">
+        <div class="pipeline-card">
+          <div class="pipeline-card-header">
+            <span class="pipeline-card-title">Live Execution Trace</span>
+            <span class="status-pill verified">Pipeline Active</span>
+          </div>
+
+          <div class="pipeline-steps">
+            <div class="pipeline-step">
+              <div class="step-node">
+                <div class="node-bullet"></div>
+                <div class="node-info">
+                  <span class="node-name">1. Register Provider</span>
+                  <span class="node-path">POST /api/auth/register/</span>
+                </div>
+              </div>
+              <span class="status-pill verified">Verified</span>
+            </div>
+
+            <div class="pipeline-step">
+              <div class="step-node">
+                <div class="node-bullet"></div>
+                <div class="node-info">
+                  <span class="node-name">2. JWT Handshake</span>
+                  <span class="node-path">POST /api/auth/login/</span>
+                </div>
+              </div>
+              <span class="api-chip post">Bearer 256-bit</span>
+            </div>
+
+            <div class="pipeline-step">
+              <div class="step-node">
+                <div class="node-bullet"></div>
+                <div class="node-info">
+                  <span class="node-name">3. Ingest Patient</span>
+                  <span class="node-path">POST /api/patients/</span>
+                </div>
+              </div>
+              <span class="status-pill verified">IsOwner Hook</span>
+            </div>
+
+            <div class="pipeline-step">
+              <div class="step-node">
+                <div class="node-bullet pending"></div>
+                <div class="node-info">
+                  <span class="node-name">4. Assign Specialist</span>
+                  <span class="node-path">POST /api/mappings/</span>
+                </div>
+              </div>
+              <span class="status-pill pending">Integrity Check</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Problem vs Solution -->
+<section class="section" id="why-careos">
+  <div class="container">
+    <div class="section-header">
+      <div class="eyebrow">Architecture Comparison</div>
+      <h2 class="section-title">Engineered to prevent clinical data cross-talk.</h2>
+      <p class="section-desc">
+        Traditional healthcare backends suffer from weak ownership filtering and raw queries. CareOS enforces strict ORM isolation at the database layer.
+      </p>
+    </div>
+
+    <div class="comparison-grid">
+      <!-- Traditional Card -->
+      <div class="comparison-card negative">
+        <div class="comp-header">
+          <h3 class="comp-title">Traditional Record Keeping</h3>
+          <span class="status-pill pending">High Risk</span>
+        </div>
+        <ul class="comp-list">
+          <li class="comp-item">
+            <span class="comp-number">01</span>
+            <div class="comp-item-content">
+              <h4>Permissive Multi-Tenancy</h4>
+              <p>User queries rely on manual WHERE clauses, easily causing unauthorized cross-patient record exposure.</p>
+            </div>
+          </li>
+          <li class="comp-item">
+            <span class="comp-number">02</span>
+            <div class="comp-item-content">
+              <h4>Ad-hoc Mapping Conflicts</h4>
+              <p>Duplicate physician assignments flood databases without unique compound constraints, creating duplicate bills.</p>
+            </div>
+          </li>
+          <li class="comp-item">
+            <span class="comp-number">03</span>
+            <div class="comp-item-content">
+              <h4>Raw SQL Injection Vectors</h4>
+              <p>Unescaped queries compromise sensitive patient charts and medical histories under audit.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- CareOS Solution Card -->
+      <div class="comparison-card positive">
+        <div class="comp-header">
+          <h3 class="comp-title">CareOS Secure Backend</h3>
+          <span class="status-pill verified">100% Verified</span>
+        </div>
+        <ul class="comp-list">
+          <li class="comp-item">
+            <span class="comp-number">01</span>
+            <div class="comp-item-content">
+              <h4>Strict IsOwner Object Isolation</h4>
+              <p>DRF permissions automatically bind record mutation to the authenticated session user at the ORM layer.</p>
+            </div>
+          </li>
+          <li class="comp-item">
+            <span class="comp-number">02</span>
+            <div class="comp-item-content">
+              <h4>Compound Constraint Verification</h4>
+              <p>PostgreSQL unique_together constraint guarantees zero duplicate patient-doctor mappings with 400/409 feedback.</p>
+            </div>
+          </li>
+          <li class="comp-item">
+            <span class="comp-number">03</span>
+            <div class="comp-item-content">
+              <h4>Pure Django ORM Execution</h4>
+              <p>100% parameter-bound queries through psycopg2-binary with automated DB index optimization.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Stats Strip -->
+<section class="stats-strip">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-value">JWT 256</div>
+        <div class="stat-label">Secured Authentication</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">100%</div>
+        <div class="stat-label">Django ORM Execution</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">Postgres</div>
+        <div class="stat-label">ACID Relational Core</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">29/29</div>
+        <div class="stat-label">Endpoints Tested & Passing</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. How It Works / 6 Numbered Pipeline Cards -->
+<section class="section" id="pipeline">
+  <div class="container">
+    <div class="section-header">
+      <div class="eyebrow">System Workflow</div>
+      <h2 class="section-title">The CareOS Lifecycle Architecture</h2>
+      <p class="section-desc">
+        End-to-end trace of how CareOS handles authentication, patient privacy, and doctor routing.
+      </p>
+    </div>
+
+    <div class="pipeline-grid">
+      <!-- 01 Auth -->
+      <div class="trace-card">
+        <div class="trace-card-top">
+          <span class="trace-number">01</span>
+          <span class="api-chip post">POST /api/auth/register/</span>
+        </div>
+        <div>
+          <h3>Credential Governance</h3>
+          <p>Validates unique email format, enforces enterprise password policies, and provisions JWT access & refresh tokens.</p>
+        </div>
+        <div class="trace-card-footer">
+          <span class="status-pill verified">Verified</span>
+          <span class="mono" style="font-size:0.75rem">SimpleJWT</span>
+        </div>
+      </div>
+
+      <!-- 02 Token Refresh -->
+      <div class="trace-card">
+        <div class="trace-card-top">
+          <span class="trace-number">02</span>
+          <span class="api-chip post">POST /api/auth/login/</span>
+        </div>
+        <div>
+          <h3>Bearer Handshake</h3>
+          <p>Exchanges cryptographic credentials for short-lived access tokens with seamless background 401 token rotation.</p>
+        </div>
+        <div class="trace-card-footer">
+          <span class="status-pill verified">Verified</span>
+          <span class="mono" style="font-size:0.75rem">Rotating Refresh</span>
+        </div>
+      </div>
+
+      <!-- 03 Patients -->
+      <div class="trace-card">
+        <div class="trace-card-top">
+          <span class="trace-number">03</span>
+          <span class="api-chip post">POST /api/patients/</span>
+        </div>
+        <div>
+          <h3>Owner-Isolated Ingestion</h3>
+          <p>Captures patient vitals and demographics. Automatically binds created_by foreign key to the active user session.</p>
+        </div>
+        <div class="trace-card-footer">
+          <span class="status-pill verified">Verified</span>
+          <span class="mono" style="font-size:0.75rem">CASCADE Safe</span>
+        </div>
+      </div>
+
+      <!-- 04 Doctors -->
+      <div class="trace-card">
+        <div class="trace-card-top">
+          <span class="trace-number">04</span>
+          <span class="api-chip get">GET /api/doctors/</span>
+        </div>
+        <div>
+          <h3>Physician Directory</h3>
+          <p>Global clinical directory accessible by authenticated staff with select_related optimization to prevent N+1 database queries.</p>
+        </div>
+        <div class="trace-card-footer">
+          <span class="status-pill verified">Verified</span>
+          <span class="mono" style="font-size:0.75rem">select_related</span>
+        </div>
+      </div>
+
+      <!-- 05 Mappings -->
+      <div class="trace-card">
+        <div class="trace-card-top">
+          <span class="trace-number">05</span>
+          <span class="api-chip post">POST /api/mappings/</span>
+        </div>
+        <div>
+          <h3>Relational Mapping</h3>
+          <p>Assigns doctors to verified patients. Rejects foreign patients and duplicate assignments with instant 400 rejection.</p>
+        </div>
+        <div class="trace-card-footer">
+          <span class="status-pill verified">Verified</span>
+          <span class="mono" style="font-size:0.75rem">Unique Together</span>
+        </div>
+      </div>
+
+      <!-- 06 Env Config -->
+      <div class="trace-card">
+        <div class="trace-card-top">
+          <span class="trace-number">06</span>
+          <span class="api-chip get">ENV /core/config</span>
+        </div>
+        <div>
+          <h3>Zero-Hardcoding Shield</h3>
+          <p>All database credentials, secret keys, host allowances, and token durations are decoupled into clean environment variables.</p>
+        </div>
+        <div class="trace-card-footer">
+          <span class="status-pill verified">Verified</span>
+          <span class="mono" style="font-size:0.75rem">python-dotenv</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Dual-Surface Section -->
+<section class="section" id="how-it-works">
+  <div class="container">
+    <div class="section-header">
+      <div class="eyebrow">Interactive Surface Preview</div>
+      <h2 class="section-title">Unified clinical operations dashboard.</h2>
+      <p class="section-desc">
+        Switch between surfaces to preview the CareOS management controllers.
+      </p>
+    </div>
+
+    <div class="dual-surface-container">
+      <div class="surface-tabs-header">
+        <div class="surface-tab-buttons">
+          <button class="surface-tab-btn active" onclick="switchPreviewSurface('hub')">Patient Records Hub</button>
+          <button class="surface-tab-btn" onclick="switchPreviewSurface('radar')">Doctor Network Radar</button>
+        </div>
+        <div class="api-chip get" id="preview-api-chip">GET /api/patients/ (Ownership Filtered)</div>
+      </div>
+
+      <div class="surface-preview-content" id="surface-preview-hub">
+        <table class="preview-table-demo">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Patient</th>
+              <th>Vitals</th>
+              <th>Contact</th>
+              <th>Medical Summary</th>
+              <th>Assigned Specialists</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono font-bold">#101</td>
+              <td><strong>Eleanor Vance</strong></td>
+              <td>42 yrs · <span class="status-pill">Female</span></td>
+              <td class="mono">+1 (555) 019-4820</td>
+              <td>Type II Diabetes, Routine monitoring</td>
+              <td><span class="status-pill verified">Dr. Gregory House</span></td>
+            </tr>
+            <tr>
+              <td class="mono font-bold">#102</td>
+              <td><strong>Marcus Thorne</strong></td>
+              <td>58 yrs · <span class="status-pill">Male</span></td>
+              <td class="mono">+1 (555) 839-2041</td>
+              <td>Post-cardiac intervention follow-up</td>
+              <td><span class="status-pill verified">Dr. James Wilson</span></td>
+            </tr>
+            <tr>
+              <td class="mono font-bold">#103</td>
+              <td><strong>Sophia Chen</strong></td>
+              <td>29 yrs · <span class="status-pill">Female</span></td>
+              <td class="mono">+1 (555) 492-1189</td>
+              <td>Allergic rhinitis, seasonal</td>
+              <td><span class="status-pill pending">Pending Assignment</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="surface-preview-content" id="surface-preview-radar" style="display:none;">
+        <table class="preview-table-demo">
+          <thead>
+            <tr>
+              <th>Physician</th>
+              <th>Specialization</th>
+              <th>Verification Email</th>
+              <th>Experience</th>
+              <th>Total Caseload</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Dr. Gregory House, MD</strong></td>
+              <td><span class="api-chip get">Diagnostic Medicine</span></td>
+              <td class="mono">house@careos.health</td>
+              <td>20 years</td>
+              <td><span class="status-pill verified">12 Active</span></td>
+            </tr>
+            <tr>
+              <td><strong>Dr. James Wilson, MD</strong></td>
+              <td><span class="api-chip get">Oncology</span></td>
+              <td class="mono">wilson@careos.health</td>
+              <td>18 years</td>
+              <td><span class="status-pill verified">8 Active</span></td>
+            </tr>
+            <tr>
+              <td><strong>Dr. Lisa Cuddy, MD</strong></td>
+              <td><span class="api-chip get">Endocrinology</span></td>
+              <td class="mono">cuddy@careos.health</td>
+              <td>15 years</td>
+              <td><span class="status-pill verified">15 Active</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Footer -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-credits">
+        <strong>CareOS</strong> — Healthcare Records Controller. Built autonomously with Django 5 & PostgreSQL.
+      </div>
+      <div class="tech-badges">
+        <span class="tech-badge">Python 3.13</span>
+        <span class="tech-badge">Django 5.x</span>
+        <span class="tech-badge">DRF</span>
+        <span class="tech-badge">PostgreSQL 16</span>
+        <span class="tech-badge" style="color:var(--accent-emerald); border-color:var(--accent-emerald);">29/29 Tests Passing</span>
+      </div>
+    </div>
+  </div>
+</footer>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function switchPreviewSurface(type) {
+  const hub = document.getElementById('surface-preview-hub');
+  const radar = document.getElementById('surface-preview-radar');
+  const chip = document.getElementById('preview-api-chip');
+  const buttons = document.querySelectorAll('.surface-tab-btn');
+
+  buttons.forEach(b => b.classList.remove('active'));
+
+  if (type === 'hub') {
+    hub.style.display = 'block';
+    radar.style.display = 'none';
+    buttons[0].classList.add('active');
+    chip.textContent = 'GET /api/patients/ (Ownership Filtered)';
+  } else {
+    hub.style.display = 'none';
+    radar.style.display = 'block';
+    buttons[1].classList.add('active');
+    chip.textContent = 'GET /api/doctors/ (select_related)';
+  }
+}
+</script>
+{% endblock %}

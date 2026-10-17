@@ -1,0 +1,303 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}CareOS — Controller Console{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/console.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container console-layout">
+  <!-- Console Header -->
+  <div class="console-header">
+    <div class="console-header-left">
+      <div class="eyebrow">Enterprise Control Plane</div>
+      <h1>Clinical Records Console</h1>
+    </div>
+
+    <div class="user-badge-wrap">
+      <div class="user-avatar-pill">
+        <div class="user-avatar-icon" id="user-avatar-initial">U</div>
+        <span id="user-display-name">Clinical Coordinator</span>
+      </div>
+      <button class="btn-signout" id="btn-signout" title="Sign out of session">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- KPI Row (Kuber-OS Metric Tiles) -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Your Patient Records</div>
+      <div class="kpi-value" id="kpi-total-patients">0</div>
+      <div class="kpi-subtext"><span>🔒</span> IsOwner Policy Isolated</div>
+    </div>
+
+    <div class="kpi-card indigo">
+      <div class="kpi-label">Active Doctors Network</div>
+      <div class="kpi-value" id="kpi-total-doctors">0</div>
+      <div class="kpi-subtext"><span>🩺</span> Verified Clinical Directory</div>
+    </div>
+
+    <div class="kpi-card amber">
+      <div class="kpi-label">Clinical Mappings</div>
+      <div class="kpi-value" id="kpi-total-mappings">0</div>
+      <div class="kpi-subtext"><span>🔗</span> Compound Constraint Safe</div>
+    </div>
+
+    <div class="kpi-card blue">
+      <div class="kpi-label">System Integrity</div>
+      <div class="kpi-value" id="kpi-system-status">Operational</div>
+      <div class="kpi-subtext"><span>⚡</span> PostgreSQL 16 ACID Core</div>
+    </div>
+  </div>
+
+  <!-- Main Management Panel -->
+  <div class="console-panel">
+    <!-- Tab Nav Header -->
+    <div class="console-tabs-nav">
+      <div class="tab-nav-left">
+        <button class="console-tab-btn active" data-tab="patients" id="tab-btn-patients">
+          <span>👤</span> Patients
+        </button>
+        <button class="console-tab-btn" data-tab="doctors" id="tab-btn-doctors">
+          <span>🩺</span> Doctors Directory
+        </button>
+        <button class="console-tab-btn" data-tab="mappings" id="tab-btn-mappings">
+          <span>🔗</span> Patient-Doctor Mappings
+        </button>
+      </div>
+
+      <div class="tab-nav-right">
+        <span class="api-chip get" id="tab-api-chip">JWT Authenticated</span>
+      </div>
+    </div>
+
+    <!-- Toolbar: Search + Action Button -->
+    <div class="console-toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="global-search" placeholder="Search active records...">
+      </div>
+
+      <button class="btn-primary" id="btn-toolbar-add">
+        + Add Patient
+      </button>
+    </div>
+
+    <!-- TAB 1: PATIENTS -->
+    <div class="tab-pane" id="tab-pane-patients" style="display:block;">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Record ID</th>
+              <th>Patient Name</th>
+              <th>Demographics</th>
+              <th>Phone</th>
+              <th>Address</th>
+              <th>Medical History</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="patients-tbody">
+            <tr><td colspan="7" class="skeleton-row"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 2: DOCTORS -->
+    <div class="tab-pane" id="tab-pane-doctors" style="display:none;">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Physician ID</th>
+              <th>Full Name</th>
+              <th>Specialization</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Experience</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="doctors-tbody">
+            <tr><td colspan="7" class="skeleton-row"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 3: MAPPINGS -->
+    <div class="tab-pane" id="tab-pane-mappings" style="display:none;">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Map ID</th>
+              <th>Patient</th>
+              <th>Assigned Doctor</th>
+              <th>Specialization</th>
+              <th>Assigned By</th>
+              <th>Timestamp</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
+          <tbody id="mappings-tbody">
+            <tr><td colspan="7" class="skeleton-row"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODALS ================= -->
+
+<!-- 1. Patient Modal (Add / Edit) -->
+<div class="modal-overlay" id="patient-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 class="modal-title" id="patient-modal-title">Add New Patient</h3>
+      <button class="modal-close" type="button">✕</button>
+    </div>
+    <form id="patient-form">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="patient-name">Patient Full Name *</label>
+          <input type="text" id="patient-name" class="form-control" placeholder="e.g. Eleanor Vance" required>
+          <div class="field-error" data-field="name"></div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group">
+            <label class="form-label" for="patient-age">Age (Years) *</label>
+            <input type="number" id="patient-age" class="form-control" placeholder="38" min="1" max="130" required>
+            <div class="field-error" data-field="age"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="patient-gender">Gender *</label>
+            <select id="patient-gender" class="form-control" required>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+              <option value="Prefer not to say">Prefer not to say</option>
+            </select>
+            <div class="field-error" data-field="gender"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="patient-phone">Phone Number *</label>
+          <input type="text" id="patient-phone" class="form-control" placeholder="+1 (555) 019-2831" required>
+          <div class="field-error" data-field="phone"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="patient-address">Residential Address *</label>
+          <input type="text" id="patient-address" class="form-control" placeholder="742 Evergreen Terrace" required>
+          <div class="field-error" data-field="address"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="patient-medical-history">Medical History (Optional)</label>
+          <textarea id="patient-medical-history" class="form-control" rows="3" placeholder="Allergies, chronic conditions, prescriptions..."></textarea>
+          <div class="field-error" data-field="medical_history"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary btn-modal-cancel">Cancel</button>
+        <button type="submit" class="btn-primary" id="btn-save-patient">Save Patient</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 2. Doctor Modal (Add / Edit) -->
+<div class="modal-overlay" id="doctor-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 class="modal-title" id="doctor-modal-title">Enroll New Doctor</h3>
+      <button class="modal-close" type="button">✕</button>
+    </div>
+    <form id="doctor-form">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="doctor-name">Physician Full Name *</label>
+          <input type="text" id="doctor-name" class="form-control" placeholder="e.g. Gregory House" required>
+          <div class="field-error" data-field="name"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="doctor-specialization">Specialization *</label>
+          <input type="text" id="doctor-specialization" class="form-control" placeholder="e.g. Diagnostic Medicine, Oncology" required>
+          <div class="field-error" data-field="specialization"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="doctor-email">Professional Email *</label>
+          <input type="email" id="doctor-email" class="form-control" placeholder="doctor@careos.health" required>
+          <div class="field-error" data-field="email"></div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group">
+            <label class="form-label" for="doctor-phone">Contact Phone *</label>
+            <input type="text" id="doctor-phone" class="form-control" placeholder="+1 (555) 018-9999" required>
+            <div class="field-error" data-field="phone"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="doctor-experience">Years of Experience *</label>
+            <input type="number" id="doctor-experience" class="form-control" placeholder="12" min="0" max="80" required>
+            <div class="field-error" data-field="experience_years"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary btn-modal-cancel">Cancel</button>
+        <button type="submit" class="btn-primary" id="btn-save-doctor">Save Doctor</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 3. Mapping Modal (Assign Doctor) -->
+<div class="modal-overlay" id="mapping-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 class="modal-title">Assign Doctor to Patient</h3>
+      <button class="modal-close" type="button">✕</button>
+    </div>
+    <form id="mapping-form">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="mapping-patient-select">Select Patient (Your Records) *</label>
+          <select id="mapping-patient-select" class="form-control" required>
+            <option value="">Loading patients...</option>
+          </select>
+          <div class="field-error" data-field="patient"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="mapping-doctor-select">Select Doctor (Clinical Directory) *</label>
+          <select id="mapping-doctor-select" class="form-control" required>
+            <option value="">Loading doctors...</option>
+          </select>
+          <div class="field-error" data-field="doctor"></div>
+        </div>
+
+        <div class="field-error" data-field="duplicate"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary btn-modal-cancel">Cancel</button>
+        <button type="submit" class="btn-primary" id="btn-save-mapping">Create Assignment</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/console.js' %}"></script>
+{% endblock %}
